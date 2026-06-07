@@ -2,9 +2,14 @@ version: '3.8'
 
 services:
   csweb:
-    build:
-      # Pulls the official CSPro build instructions directly from GitHub
-      context: https://github.com/CSProDevelopment/docker-csweb.git#main:release
+    build: 
+      context: ./csweb
+      args:
+        MYSQL_HOST: ${DB_HOST}
+        MYSQL_USER: ${DB_USER}
+        MYSQL_PASSWORD: ${DB_PASSWORD}
+        MYSQL_DATABASE: ${DB_NAME}
+        DEFAULT_TIMEZONE: "UTC"
     environment:
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT}
