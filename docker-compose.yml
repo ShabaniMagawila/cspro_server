@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  csweb:
+    build:
+      # Pulls the official CSPro build instructions directly from GitHub
+      context: https://github.com/CSProDevelopment/docker-csweb.git#main:release
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+    volumes:
+      - csweb_files:/var/www/html/files
+    networks:
+      - dokploy-network
+    labels:
+      - "traefik.enable=true"
+      # Replace with your actual domain
+      - "traefik.http.routers.csweb.rule=Host(`csweb.trivanet.online`)"
+      - "traefik.http.routers.csweb.entrypoints=websecure"
+      - "traefik.http.routers.csweb.tls.certresolver=letsencrypt"
+      # Tells Dokploy's Traefik to route traffic to Apache's internal port 80
+      - "traefik.http.services.csweb.loadbalancer.server.port=80"
+
+volumes:
+  # Crucial: These prevent questionnaire data loss when the container restarts
+  csweb_files:
+
+networks:
+  dokploy-network:
+    external: true
