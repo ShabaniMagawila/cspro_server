@@ -1,9 +1,4 @@
-FROM php:8.2-apache
-ARG MYSQL_HOST
-ARG MYSQL_DATABASE
-ARG MYSQL_USER
-ARG MYSQL_PASSWORD
-ARG DEFAULT_TIMEZONE
+FROM php:8.2-apache-bullseye
 
 # Use production php settings
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
@@ -31,4 +26,4 @@ RUN set -eux; \
 
 # configuration file
 RUN set -eux; \
-echo "<?php define('DBHOST', '$MYSQL_HOST'); define('DBUSER', '$MYSQL_USER'); define('DBPASS', '$MYSQL_PASSWORD'); define('DBNAME', '$MYSQL_DATABASE'); define('ENABLE_OAUTH', true); define('FILES_FOLDER', '/var/www/html/files'); define('DEFAULT_TIMEZONE', '$DEFAULT_TIMEZONE'); define('MAX_EXECUTION_TIME', '300'); define('API_URL', 'http://localhost/api/'); define('CSWEB_LOG_LEVEL' , 'error'); define('CSWEB_PROCESS_CASES_LOG_LEVEL', 'error'); ?>" > /var/www/html/src/AppBundle/config.php
+echo "<?php define('DBHOST', getenv('DB_HOST') ?: 'localhost'); define('DBUSER', getenv('DB_USER')); define('DBPASS', getenv('DB_PASSWORD')); define('DBNAME', getenv('DB_NAME')); define('ENABLE_OAUTH', true); define('FILES_FOLDER', '/var/www/html/files'); define('DEFAULT_TIMEZONE', getenv('DEFAULT_TIMEZONE') ?: 'UTC'); define('MAX_EXECUTION_TIME', '300'); define('API_URL', 'http://localhost/api/'); define('CSWEB_LOG_LEVEL' , 'error'); define('CSWEB_PROCESS_CASES_LOG_LEVEL', 'error'); ?>" > /var/www/html/src/AppBundle/config.php
