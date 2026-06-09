@@ -3,7 +3,8 @@ version: '3.8'
 services:
   csweb:
     build: 
-      context: ./csweb
+      context: .
+      dockerfile: csweb/Dockerfile
     environment:
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT}

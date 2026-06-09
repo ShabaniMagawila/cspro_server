@@ -17,12 +17,12 @@ RUN set -eux; \
 	a2enmod rewrite; \
 	sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
 
-# download and unzip csweb source
+# copy and unzip local csweb source
+COPY Data/csweb-8.0.1.zip /tmp/csweb.zip
 RUN set -eux; \
-	curl -o csweb.zip -fSL https://www.csprousers.org/downloads/cspro/csweb8.0.zip; \
-	unzip csweb.zip -d /var/www/html/; \
+	unzip /tmp/csweb.zip -d /var/www/html/; \
 	chown -R www-data:www-data /var/www/html; \
-	rm csweb.zip
+	rm /tmp/csweb.zip
 
 # configuration file
 RUN set -eux; \
