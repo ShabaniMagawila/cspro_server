@@ -23,6 +23,10 @@ RUN set -eux; \
 	chown -R www-data:www-data /var/www/html; \
 	rm /tmp/csweb.zip
 
-# configuration file
-RUN set -eux; \
-echo "<?php define('DBHOST', getenv('DB_HOST') ?: 'localhost'); define('DBUSER', getenv('DB_USER')); define('DBPASS', getenv('DB_PASSWORD')); define('DBNAME', getenv('DB_NAME')); define('ENABLE_OAUTH', true); define('FILES_FOLDER', '/var/www/html/files'); define('DEFAULT_TIMEZONE', getenv('DEFAULT_TIMEZONE') ?: 'UTC'); define('MAX_EXECUTION_TIME', '300'); define('API_URL', 'http://localhost/api/'); define('CSWEB_LOG_LEVEL' , 'error'); define('CSWEB_PROCESS_CASES_LOG_LEVEL', 'error'); ?>" > /var/www/html/src/AppBundle/config.php
+# generate configuration file at runtime via entrypoint
+RUN echo '#!/bin/bash\n\
+echo "<?php define(\x27DBHOST\x27, \x27${DB_HOST:-localhost}\x27); define(\x27DBUSER\x27, \x27${DB_USER}\x27); define(\x27DBPASS\x27, \x27${DB_PASSWORD}\x27); define(\x27DBNAME\x27, \x27${DB_NAME}\x27); define(\x27ENABLE_OAUTH\x27, true); define(\x27FILES_FOLDER\x27, \x27/var/www/html/files\x27); define(\x27DEFAULT_TIMEZONE\x27, \x27${DEFAULT_TIMEZONE:-UTC}\x27); define(\x27MAX_EXECUTION_TIME\x27, \x27300\x27); define(\x27API_URL\x27, \x27http://localhost/api/\x27); define(\x27CSWEB_LOG_LEVEL\x27 , \x27error\x27); define(\x27CSWEB_PROCESS_CASES_LOG_LEVEL\x27, \x27error\x27); ?>" > /var/www/html/src/AppBundle/config.php\n\
+exec docker-php-entrypoint "$@"' > /usr/local/bin/start.sh && chmod +x /usr/local/bin/start.sh
+
+ENTRYPOINT ["/usr/local/bin/start.sh"]
+CMD ["apache2-foreground"]
