@@ -25,7 +25,6 @@ RUN set -eux; \
 
 # generate configuration file at runtime via entrypoint
 RUN echo '#!/bin/bash\n\
-echo "<?php define(\"DBHOST\", \"${DB_HOST:-localhost}\"); define(\"DBUSER\", \"${DB_USER}\"); define(\"DBPASS\", \"${DB_PASSWORD}\"); define(\"DBNAME\", \"${DB_NAME}\"); define(\"ENABLE_OAUTH\", true); define(\"FILES_FOLDER\", \"/var/www/html/files\"); define(\"DEFAULT_TIMEZONE\", \"${DEFAULT_TIMEZONE:-UTC}\"); define(\"MAX_EXECUTION_TIME\", \"300\"); define(\"API_URL\", \"${API_URL:-http://localhost/api/}\"); define(\"CSWEB_LOG_LEVEL\" , \"error\"); define(\"CSWEB_PROCESS_CASES_LOG_LEVEL\", \"error\"); ?>" > /var/www/html/src/AppBundle/config.php\n\
 exec docker-php-entrypoint "$@"' > /usr/local/bin/start.sh && chmod +x /usr/local/bin/start.sh
 
 ENTRYPOINT ["/usr/local/bin/start.sh"]
